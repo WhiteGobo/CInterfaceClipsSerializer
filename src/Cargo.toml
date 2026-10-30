@@ -1,0 +1,19 @@
+[package]
+name = "CInterfaceClipsSerializer"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+oxigraph = {
+	version = "0.5.8",
+	default-features = false,
+	#features = ["rocksdb"],
+}
+#oxttl = "0.2.3"
+oxrdf = "0.3.3"
+#oxiri = "0.2.11"
+#oxjsonld = "0.2.4"
+#oxhttp = {version = "0.3.1", features = ["native-tls"]}
