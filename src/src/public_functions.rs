@@ -32,7 +32,7 @@ pub extern "C" fn ClipsSerializer_add(
         object_type: u8,
         _graph_id: *const c_char, _graph_type: u8,
         serializer: *mut ClipsSerializer,
-        ) -> i64
+        ) -> i8
 {
     if serializer.is_null() {
         return -1;

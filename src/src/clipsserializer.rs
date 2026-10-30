@@ -50,7 +50,7 @@ impl ClipsSerializer {
         predicate: *const c_char,
         object: *const c_char, object_suffix: *const c_char,
         object_type: u8,
-    ) -> i64
+    ) -> i8
     {
         let q_quad = self.translator.ctriple_to_quad(subject, subject_type,
                             predicate, object, object_suffix, object_type);

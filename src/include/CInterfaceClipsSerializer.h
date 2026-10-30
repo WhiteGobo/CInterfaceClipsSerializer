@@ -23,7 +23,7 @@ extern "C" {
 ClipsSerializer* ClipsSerializer_new();
 //void free_ClipsSerializer(ClipsSerializer*);
 
-int64_t ClipsSerializer_add(const char* subject, uint8_t subject_type,
+int8_t ClipsSerializer_add(const char* subject, uint8_t subject_type,
                 const char* predicate,
                 const char* object, const char* object_suffix,
                 uint8_t object_type,
