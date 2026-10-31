@@ -2,6 +2,7 @@ use std::io::Error;
 use oxigraph::store::Store;
 use oxigraph::model::vocab::rdf;
 use crate::constants::clips;
+use crate::error::CICSError;
 use oxigraph::model::{NamedNodeRef, NamedOrBlankNodeRef, NamedOrBlankNode, Term, Literal, TermRef};
 
 fn get_proplist(store: &Store, node: NamedOrBlankNodeRef, pred: NamedNodeRef) -> Option<Vec<NamedOrBlankNode>> {
@@ -46,10 +47,11 @@ fn query_obj(store: &Store, node: NamedOrBlankNodeRef, pred: NamedNodeRef) -> Op
 fn query_literal(store: &Store, node: NamedOrBlankNodeRef, pred: NamedNodeRef) -> Option<Literal>
 {
     match query_term(store, node, pred) {
-        Some(term) => match TryInto::<Literal>::try_into(term) {
+        Some(term) => {
+            match TryInto::<Literal>::try_into(term) {
             Ok(ret) => Some(ret),
             Err(_e) => None,
-        },
+        }},
         None => None,
     }
 }
@@ -74,7 +76,7 @@ pub fn store2clips(store: &Store) -> Result<Vec<u8>, Error> {
             Err(_e) => {},
             Ok(quad) => match print_defrule(store, quad.subject.as_ref()){
                 Some(x) => ret.push_str(&x),
-                None => {},
+                None => {return Err(Error::other("asdf"));},
             },
         }
     }
@@ -90,12 +92,12 @@ fn print_defrule(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
         }
     }
     match print_defrule_condition(store, node) {
-        None => {},
+        None => {return None;},
         Some(x) => {ret.push_str(&x)}
     }
     ret.push_str("=>");
     match print_defrule_action(store, node) {
-        None => {},
+        None => {return None;},
         Some(x) => {ret.push_str(&x)}
     }
     ret.push_str(")");
@@ -104,8 +106,8 @@ fn print_defrule(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
 
 fn print_defrule_condition(store: &Store, node: NamedOrBlankNodeRef) -> Option<String>
 {
-    let list = match get_idnodelist(store, node) {
-        None => {return None;},
+    let list = match get_proplist(store, node, clips::conditional_element) {
+        None => {return Some("".to_owned());},
         Some(x) => x,
     };
     let mut ret = String::new();
@@ -121,8 +123,8 @@ fn print_defrule_condition(store: &Store, node: NamedOrBlankNodeRef) -> Option<S
 
 fn print_defrule_action(store: &Store, node: NamedOrBlankNodeRef) -> Option<String>
 {
-    let list = match get_idnodelist(store, node) {
-        None => {return None;},
+    let list = match get_proplist(store, node, clips::action) {
+        None => {return Some("".to_owned());},
         Some(x) => x,
     };
     let mut ret = String::new();
@@ -155,7 +157,9 @@ fn print_lhs_slot(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
         Some(x) => vec![x],
         None => {
             match get_proplist(store, node, clips::constraints){
-                None => {return None;},
+                None => {
+                    return None;
+                },
                 Some(proplist) => proplist,
             }
         },
@@ -163,7 +167,9 @@ fn print_lhs_slot(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
     let mut args = String::new();
     for item in constraints {
         match print_constraint(store, item.as_ref()){
-            None => {return None;},
+            None => {
+                return None;
+            },
             Some(x) => {
                 args.push_str(" ");
                 args.push_str(&x);
@@ -307,7 +313,9 @@ fn print_expression(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> 
         Some(x) => {return Some(x);},
         None => {},
     }
-    None
+    eprintln!("failed to print expression: {}\n", print_nodeinfo(store, node));
+    //None
+    Some("(fail)".to_owned())
 }
 
 
@@ -351,9 +359,16 @@ fn print_constraint(store: &Store, node: NamedOrBlankNodeRef) -> Option<String>
         },
     }
     match print_constant(store, node){
-        Some(x) => Some(x),
-        None => print_variable(store, node)
+        Some(x) => {return Some(x);},
+        None => {},
     }
+    match print_variable(store, node){
+        Some(x) => {return Some(x);},
+        None => {},
+    }
+    eprintln!("failed to print constraint: {}\n", print_nodeinfo(store, node));
+    //None
+    Some("(fail)".to_owned())
 }
 
 
@@ -370,7 +385,9 @@ fn print_term(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
         Some(x) => {return Some(x);},
         None => {},
     }
-    None
+    eprintln!("failed to print term: {}\n", print_nodeinfo(store, node));
+    //None
+    Some("(fail)".to_owned())
 }
 
 
@@ -522,11 +539,30 @@ fn print_rhs_field(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
         Some(x) => {return Some(x);},
         None => {},
     }
-    print_function(store, node)
+    match print_function(store, node) {
+        Some(x) => {return Some(x);},
+        None => {},
+    }
+    eprintln!("failed to print rhs field: {}\n", print_nodeinfo(store, node));
+    //None
+    Some("(fail)".to_owned())
 }
 
 
 fn print_test_ce(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
     let function = print_function(store, node)?;
     Some(format!("(test {})", function))
+}
+
+fn print_nodeinfo(store: &Store, node: NamedOrBlankNodeRef) -> String {
+    let mut ret = format!("{}[", node);
+    let q = store.quads_for_pattern(Some(node), None, None, None);
+    for x in q {
+        match x {
+            Ok(y) => {ret.push_str(&format!("{} -> {}, ", y.predicate, y.object));},
+            Err(_e) => {},
+        }
+    }
+    ret.push_str("]");
+    return ret;
 }
