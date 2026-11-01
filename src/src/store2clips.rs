@@ -3,7 +3,12 @@ use oxigraph::store::Store;
 use oxigraph::model::vocab::rdf;
 use crate::constants::clips;
 use crate::error::CICSError;
+use uuid::Uuid;
 use oxigraph::model::{NamedNodeRef, NamedOrBlankNodeRef, NamedOrBlankNode, Term, Literal, TermRef};
+
+fn inset(input: String) -> String {
+    format!("\t{}", &input.replace("\n", "\n\t"))
+}
 
 fn get_proplist(store: &Store, node: NamedOrBlankNodeRef, pred: NamedNodeRef) -> Option<Vec<NamedOrBlankNode>> {
     let listbase = match query_obj(store, node, pred){
@@ -76,32 +81,47 @@ pub fn store2clips(store: &Store) -> Result<Vec<u8>, Error> {
             Err(_e) => {},
             Ok(quad) => match print_defrule(store, quad.subject.as_ref()){
                 Some(x) => ret.push_str(&x),
-                None => {return Err(Error::other("asdf"));},
+                None => {return Err(Error::other("defrule"));},
             },
         }
+        ret.push_str("\n\n");
+    }
+    let q2 = store.quads_for_pattern(None, Some(rdf::TYPE), Some(clips::Deffacts.into()), None);
+    for q_quad in q2 {
+        match q_quad {
+            Err(_e) => {},
+            Ok(quad) => match print_deffacts(store, quad.subject.as_ref()){
+                Some(x) => ret.push_str(&x),
+                None => {return Err(Error::other("deffacts"));},
+            },
+        }
+        ret.push_str("\n\n");
     }
     Ok(ret.into_bytes())
 }
 
 fn print_defrule(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
-    let mut ret = "Defrule(".to_owned();
+    let name = match query_literal(store, node, clips::rule_name) {
+        Some(x) => x.value().to_owned(),
+        None => format!("rule{}", Uuid::new_v4()),
+    };
+    let mut extras = String::new();
     match get_salience(store, node){
         None => {},
         Some(x) => {
-            ret.push_str(&format!("(declare (salience {}))", x));
+            extras.push_str(&format!("(declare (salience {}))", x));
         }
     }
-    match print_defrule_condition(store, node) {
+    let conditions = match print_defrule_condition(store, node) {
         None => {return None;},
-        Some(x) => {ret.push_str(&x)}
-    }
-    ret.push_str("=>");
-    match print_defrule_action(store, node) {
+        Some(x) => inset(x),
+    };
+    let actions = match print_defrule_action(store, node) {
         None => {return None;},
-        Some(x) => {ret.push_str(&x)}
-    }
-    ret.push_str(")");
-    Some(ret)
+        Some(x) => inset(x),
+    };
+    Some(format!("(defrule {} {}\n{}\n\t=>\n{}\n)",
+        name, extras, conditions, actions))
 }
 
 fn print_defrule_condition(store: &Store, node: NamedOrBlankNodeRef) -> Option<String>
@@ -260,9 +280,9 @@ fn print_variable(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
         Some(x) => x,
     };
     if check_triple(store, node, rdf::TYPE, clips::MultifieldVariable.into()) {
-        Some(format!("$?{}", varname))
+        Some(format!("$?{}", varname.value()))
     } else {
-        Some(format!("?{}", varname))
+        Some(format!("?{}", varname.value()))
     }
 }
 
@@ -325,17 +345,21 @@ fn print_action(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
 
 
 fn print_deffacts(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
-    let name = query_literal(store, node, clips::deffacts_name)?;
+    let name = match query_literal(store, node, clips::deffacts_name) {
+        Some(x) => x.value().to_owned(),
+        None => format!("facts{}", Uuid::new_v4()),
+    };
     let q = match get_proplist(store, node, clips::rhs_pattern){
         Some(x) => x,
         None => vec![],
     };
     let mut tmp = String::new();
     for item in q {
-        tmp.push_str(" ");
-        tmp.push_str(&print_template_rhs_pattern(store, item.as_ref())?);
+        tmp.push_str("\n");
+        let x = print_template_rhs_pattern(store, item.as_ref())?;
+        tmp.push_str(&inset(x));
     }
-    Some(format!("(deffacts {} {})", name.value(), tmp))
+    Some(format!("(deffacts {} {}\n)", name, tmp))
 }
 
 

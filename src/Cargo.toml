@@ -12,6 +12,10 @@ oxigraph = {
 	default-features = false,
 	#features = ["rocksdb"],
 }
+uuid = {
+	version = "1.29.0",
+	features = ["v4"],
+}
 #oxttl = "0.2.3"
 oxrdf = "0.3.3"
 #oxiri = "0.2.11"
