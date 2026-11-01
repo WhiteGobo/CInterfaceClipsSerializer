@@ -1,0 +1,21 @@
+@prefix ns1: <http://clips.script/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+[] a ns1:Defrule ;
+    ns1:rule-name "myrule";
+    ns1:action ( [ ns1:assert [ ns1:deftemplate-name "Atom" ;
+                        ns1:slot ( [ ns1:field ( [ ns1:symbol "<http://example.org/example#a^^http://www.w3.org/2001/XMLSchema#anyURI>" ] ) ;
+                                    ns1:slot-name "op" ] [ ns1:field ( [ns1:variable-name "x"] ) ;
+                                    ns1:slot-name "args" ] ) ] ] ) ;
+    ns1:conditional-element ( [ a ns1:TemplatePatternCE ;
+                ns1:deftemplate-name "Atom" ;
+                ns1:slot ( [ ns1:constraint [ ns1:symbol "<http://example.org/example#b^^http://www.w3.org/2001/XMLSchema#anyURI>" ] ;
+                            ns1:slot-name "op" ] [ ns1:constraints ( [ns1:variable-name "x"] ) ;
+                            ns1:slot-name "args" ] ) ] ) .
+
+[] a ns1:Deffacts ;
+    ns1:deffacts-name "myfacts";
+    ns1:rhs-pattern ( [ ns1:deftemplate-name "Atom" ;
+                ns1:slot ( [ ns1:field ( [ ns1:symbol "<http://example.org/example#a^^http://www.w3.org/2001/XMLSchema#anyURI>" ] ) ;
+                            ns1:slot-name "op" ] [ ns1:field ( [ ns1:string "1" ] [ ns1:string "0" ] ) ;
+                            ns1:slot-name "args" ] ) ] ) .
