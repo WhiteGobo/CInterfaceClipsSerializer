@@ -416,6 +416,7 @@ fn print_term(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
 
 
 fn print_constant(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
+    //Maybe just replace all of this with clips::lexeme or clips::value
     match query_literal(store, node, clips::symbol) {
         None => {},
         Some(x) => {
@@ -425,6 +426,7 @@ fn print_constant(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
     match query_literal(store, node, clips::string) {
         None => {},
         Some(x) => {
+            //return Some(format!("\"{}\"", x.value()));
             return Some(format!("\"{}\"", x.value()));
         },
     }
