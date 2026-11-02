@@ -427,7 +427,7 @@ fn print_constant(store: &Store, node: NamedOrBlankNodeRef) -> Option<String> {
         None => {},
         Some(x) => {
             //return Some(format!("\"{}\"", x.value()));
-            return Some(format!("\"{}\"", x.value()));
+            return Some(format!("{}", x.value()));
         },
     }
     None
