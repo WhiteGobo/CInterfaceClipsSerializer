@@ -31,14 +31,14 @@ _:n22f6c5dab58946359af86e1721a815fdb33 <http://www.w3.org/1999/02/22-rdf-syntax-
 _:n22f6c5dab58946359af86e1721a815fdb4 <http://clips.script/field> _:n22f6c5dab58946359af86e1721a815fdb6 .
 _:n22f6c5dab58946359af86e1721a815fdb13 <http://clips.script/deftemplate-name> "Atom" .
 _:n22f6c5dab58946359af86e1721a815fdb3 <http://clips.script/slot> _:n22f6c5dab58946359af86e1721a815fdb10 .
-_:n22f6c5dab58946359af86e1721a815fdb25 <http://clips.script/symbol> "<http://example.org/example#a^^http://www.w3.org/2001/XMLSchema#anyURI>" .
+_:n22f6c5dab58946359af86e1721a815fdb25 <http://clips.script/symbol> "A" .
 _:n22f6c5dab58946359af86e1721a815fdb11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:n22f6c5dab58946359af86e1721a815fdb32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n22f6c5dab58946359af86e1721a815fdb33 .
 _:n22f6c5dab58946359af86e1721a815fdb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:n22f6c5dab58946359af86e1721a815fdb28 <http://clips.script/string> "1" .
 _:n22f6c5dab58946359af86e1721a815fdb18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n22f6c5dab58946359af86e1721a815fdb17 .
 _:n22f6c5dab58946359af86e1721a815fdb16 <http://clips.script/slot-name> "args" .
-_:n22f6c5dab58946359af86e1721a815fdb15 <http://clips.script/symbol> "<http://example.org/example#b^^http://www.w3.org/2001/XMLSchema#anyURI>" .
+_:n22f6c5dab58946359af86e1721a815fdb15 <http://clips.script/symbol> "B" .
 _:n22f6c5dab58946359af86e1721a815fdb1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://clips.script/Defrule> .
 _:n22f6c5dab58946359af86e1721a815fdb34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n22f6c5dab58946359af86e1721a815fdb23 .
 _:n22f6c5dab58946359af86e1721a815fdb18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
@@ -54,7 +54,7 @@ _:n22f6c5dab58946359af86e1721a815fdb21 <http://www.w3.org/1999/02/22-rdf-syntax-
 _:n22f6c5dab58946359af86e1721a815fdb26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:n22f6c5dab58946359af86e1721a815fdb32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> _:n22f6c5dab58946359af86e1721a815fdb24 .
 _:n22f6c5dab58946359af86e1721a815fdb30 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:n22f6c5dab58946359af86e1721a815fdb31 .
-_:n22f6c5dab58946359af86e1721a815fdb5 <http://clips.script/symbol> "<http://example.org/example#a^^http://www.w3.org/2001/XMLSchema#anyURI>" .
+_:n22f6c5dab58946359af86e1721a815fdb5 <http://clips.script/symbol> "A" .
 _:n22f6c5dab58946359af86e1721a815fdb24 <http://clips.script/field> _:n22f6c5dab58946359af86e1721a815fdb26 .
 _:n22f6c5dab58946359af86e1721a815fdb4 <http://clips.script/slot-name> "op" .
 _:n22f6c5dab58946359af86e1721a815fdb27 <http://clips.script/field> _:n22f6c5dab58946359af86e1721a815fdb30 .
